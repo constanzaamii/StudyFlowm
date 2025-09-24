@@ -12,13 +12,33 @@ class GradeController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-        $grades = $user->grades()
-            ->with('subject')
-            ->orderBy('evaluation_date', 'desc')
-            ->get();
+        // Si es una petición AJAX/API, devolver JSON
+        if (request()->expectsJson() || request()->is('api/*')) {
+            // Datos de prueba para mostrar las notas
+            $sampleGrades = [
+                [
+                    'id' => 1,
+                    'evaluation_type' => 'Parcial 1',
+                    'grade' => 6.5,
+                    'weight' => 0.3,
+                    'evaluation_date' => '2025-09-15',
+                    'subject' => ['name' => 'Base de Datos']
+                ],
+                [
+                    'id' => 2,
+                    'evaluation_type' => 'Laboratorio',
+                    'grade' => 7.0,
+                    'weight' => 0.2,
+                    'evaluation_date' => '2025-09-20',
+                    'subject' => ['name' => 'Programación']
+                ]
+            ];
 
-        return response()->json($grades);
+            return response()->json($sampleGrades);
+        }
+
+        // Si es una petición web normal, devolver la vista
+        return view('grades');
     }
 
     public function store(Request $request)

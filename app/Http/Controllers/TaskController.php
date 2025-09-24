@@ -12,13 +12,44 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-        $tasks = $user->tasks()
-            ->with('subject')
-            ->orderBy('due_date', 'asc')
-            ->get();
+        // Si es una petición AJAX/API, devolver JSON
+        if (request()->expectsJson() || request()->is('api/*')) {
+            // Datos de prueba para mostrar las tareas
+            $sampleTasks = [
+                [
+                    'id' => 1,
+                    'title' => 'Proyecto Final Base de Datos',
+                    'description' => 'Implementar sistema completo con CRUD y consultas avanzadas',
+                    'due_date' => '2025-09-30T23:59:00',
+                    'priority' => 'high',
+                    'status' => 'pending',
+                    'subject' => ['name' => 'Base de Datos']
+                ],
+                [
+                    'id' => 2,
+                    'title' => 'Ensayo Algoritmos de Ordenamiento',
+                    'description' => 'Análisis comparativo de quicksort vs mergesort',
+                    'due_date' => '2025-09-28T18:00:00',
+                    'priority' => 'medium',
+                    'status' => 'in_progress',
+                    'subject' => ['name' => 'Programación']
+                ],
+                [
+                    'id' => 3,
+                    'title' => 'Ejercicios Cálculo Integral',
+                    'description' => 'Resolver ejercicios del capítulo 7',
+                    'due_date' => '2025-09-26T12:00:00',
+                    'priority' => 'low',
+                    'status' => 'completed',
+                    'subject' => ['name' => 'Matemáticas']
+                ]
+            ];
 
-        return response()->json($tasks);
+            return response()->json($sampleTasks);
+        }
+
+        // Si es una petición web normal, devolver la vista
+        return view('task');
     }
 
     public function store(Request $request)
@@ -122,33 +153,18 @@ class TaskController extends Controller
         ]);
     }
 
-    public function toggle(Task $task)
+    public function toggle($taskId)
     {
-        // Ensure user owns the task
-        if ($task->user_id !== Auth::id()) {
-            return response()->json(['error' => 'No autorizado'], 403);
-        }
-
-        $newStatus = $task->status === 'completed' ? 'pending' : 'completed';
-        $task->update([
-            'status' => $newStatus,
-            'completion_date' => $newStatus === 'completed' ? now() : null,
-        ]);
-
-        // Log activity
-        $action = $newStatus === 'completed' ? 'completed' : 'reopened';
-        ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => $action,
-            'entity_type' => 'task',
-            'entity_id' => $task->id,
-            'description' => "Tarea {$action}: {$task->title}",
-        ]);
-
+        // Para propósitos de demostración, simular el cambio de estado
+        // En una aplicación real, esto actualizaría la base de datos
+        
         return response()->json([
             'success' => true,
-            'message' => $newStatus === 'completed' ? 'Tarea completada' : 'Tarea marcada como pendiente',
-            'task' => $task->load('subject')
+            'message' => 'Estado de tarea actualizado',
+            'task' => [
+                'id' => $taskId,
+                'status' => request()->input('status', 'completed')
+            ]
         ]);
     }
 }

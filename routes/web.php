@@ -8,6 +8,7 @@ use App\Http\Controllers\GradeController;
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::resource('tasks', TaskController::class);
 Route::resource('grades', GradeController::class);
+Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggle'])->name('tasks.toggle');
 
 // API Routes for AJAX
 Route::prefix('api')->group(function () {

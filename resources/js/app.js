@@ -103,6 +103,7 @@ const gradeForm = document.getElementById("gradeForm")
 
 // Initialize app
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("StudyFlow App iniciada correctamente")
   loadTasks()
   updateStats()
   loadRecentActivity()
@@ -111,6 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
   document.getElementById("taskDueDate").value = tomorrow.toISOString().slice(0, 16)
+  
+  console.log("Inicialización completada")
 })
 
 // Task Management Functions
@@ -153,7 +156,7 @@ function createTaskElement(task) {
   taskDiv.innerHTML = `
         <div class="task-header">
             <div>
-                <div class="task-title ${task.completed ? 'style="text-decoration: line-through; opacity: 0.6;"' : ""}">${task.title}</div>
+                <div class="task-title" ${task.completed ? 'style="text-decoration: line-through; opacity: 0.6;"' : ""}>${task.title}</div>
                 <span class="task-subject">${task.subject}</span>
             </div>
             <div class="flex gap-2">

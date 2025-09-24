@@ -1,33 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyFlow - Gestión Académica UCSC</title>
-    <link rel="stylesheet" href="{{ asset('css/globals.css') }}">
-</head>
-<body>
-    
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">📚 StudyFlow</div>
-                <nav class="nav">
-                    <a href="/" class="nav-link active">Dashboard</a>
-                    <a href="/tasks" class="nav-link">Tareas</a>
-                    <a href="/grades" class="nav-link">Notas</a>
-                    <a href="#calendar" class="nav-link">Calendario</a>
-                </nav>
-                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
-                    <span class="theme-icon">🌙</span>
-                </button>
-            </div>
-        </div>
-    </header>
+@extends('layouts.app')
 
-   
-    <main class="main">
-        <div class="container">
+@section('content')
+<div class="max-w-7xl mx-auto py-6 px-4">
            
             <div class="card">
                 <div class="card-header">
@@ -206,7 +180,17 @@
             </form>
         </div>
     </div>
+</div>
 
-    <script src="{{ asset('js/app.js') }}"></script>
-</body>
-</html>
+<script>
+// Actualizar estadísticas con datos del servidor
+document.addEventListener('DOMContentLoaded', function() {
+    @if(isset($stats))
+        document.getElementById('totalTasks').textContent = '{{ $stats["totalTasks"] }}';
+        document.getElementById('pendingTasks').textContent = '{{ $stats["pendingTasks"] }}';
+        document.getElementById('completedTasks').textContent = '{{ $stats["completedTasks"] }}';
+        document.getElementById('averageGrade').textContent = '{{ $stats["averageGrade"] }}';
+    @endif
+});
+</script>
+@endsection

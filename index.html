@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyFlow - Gestión Académica UCSC</title>
-    <link rel="stylesheet" href="styles/globals.css">
+    <link rel="stylesheet" href="public/css/globals.css">
 </head>
 <body>
     <!-- Header -->
@@ -38,19 +38,19 @@
             <!-- Stats Grid -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-value" id="totalTasks">12</div>
+                    <div class="stat-value" id="totalTasks">0</div>
                     <div class="stat-label">Tareas Totales</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" id="pendingTasks">5</div>
+                    <div class="stat-value" id="pendingTasks">0</div>
                     <div class="stat-label">Pendientes</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" id="averageGrade">6.2</div>
+                    <div class="stat-value" id="averageGrade">0.0</div>
                     <div class="stat-label">Promedio General</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" id="completedTasks">7</div>
+                    <div class="stat-value" id="completedTasks">0</div>
                     <div class="stat-label">Completadas</div>
                 </div>
             </div>
@@ -73,42 +73,7 @@
                             </div>
                         </div>
                         <div class="task-list" id="taskList">
-                            <!-- Sample Tasks -->
-                            <div class="task-item">
-                                <div class="task-header">
-                                    <div>
-                                        <div class="task-title">Proyecto Final Base de Datos</div>
-                                        <span class="task-subject">Base de Datos</span>
-                                    </div>
-                                    <span class="task-priority priority-high">Alta</span>
-                                </div>
-                                <div class="task-due">📅 Vence: 25 Sep 2024, 23:59</div>
-                                <p style="color: var(--muted-foreground); font-size: 0.875rem;">Implementar sistema completo con CRUD y consultas avanzadas</p>
-                            </div>
-                            
-                            <div class="task-item">
-                                <div class="task-header">
-                                    <div>
-                                        <div class="task-title">Ensayo Algoritmos de Ordenamiento</div>
-                                        <span class="task-subject">Programación</span>
-                                    </div>
-                                    <span class="task-priority priority-medium">Media</span>
-                                </div>
-                                <div class="task-due">📅 Vence: 28 Sep 2024, 18:00</div>
-                                <p style="color: var(--muted-foreground); font-size: 0.875rem;">Análisis comparativo de quicksort vs mergesort</p>
-                            </div>
-                            
-                            <div class="task-item">
-                                <div class="task-header">
-                                    <div>
-                                        <div class="task-title">Ejercicios Cálculo Integral</div>
-                                        <span class="task-subject">Matemáticas</span>
-                                    </div>
-                                    <span class="task-priority priority-low">Baja</span>
-                                </div>
-                                <div class="task-due">📅 Vence: 30 Sep 2024, 12:00</div>
-                                <p style="color: var(--muted-foreground); font-size: 0.875rem;">Resolver ejercicios del capítulo 7</p>
-                            </div>
+                            <!-- Las tareas se cargarán dinámicamente con JavaScript -->
                         </div>
                     </div>
                 </div>
@@ -139,18 +104,7 @@
                             <h3 class="card-title">Actividad Reciente</h3>
                         </div>
                         <div id="recentActivity">
-                            <div style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
-                                <div style="font-size: 0.875rem; font-weight: 500;">Tarea completada</div>
-                                <div style="font-size: 0.75rem; color: var(--muted-foreground);">Laboratorio Física - hace 2 horas</div>
-                            </div>
-                            <div style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
-                                <div style="font-size: 0.875rem; font-weight: 500;">Nueva nota registrada</div>
-                                <div style="font-size: 0.75rem; color: var(--muted-foreground);">Programación: 6.5 - hace 1 día</div>
-                            </div>
-                            <div style="padding: 0.5rem 0;">
-                                <div style="font-size: 0.875rem; font-weight: 500;">Recordatorio creado</div>
-                                <div style="font-size: 0.75rem; color: var(--muted-foreground);">Examen Matemáticas - hace 2 días</div>
-                            </div>
+                            <!-- La actividad reciente se cargará dinámicamente -->
                         </div>
                     </div>
                 </div>
@@ -249,45 +203,6 @@
         </div>
     </div>
 
-    <script>
-        // Sample JavaScript functionality
-        function openTaskModal() {
-            document.getElementById('taskModal').classList.add('active');
-        }
-        
-        function closeTaskModal() {
-            document.getElementById('taskModal').classList.remove('active');
-        }
-        
-        function openGradeModal() {
-            document.getElementById('gradeModal').classList.add('active');
-        }
-        
-        function closeGradeModal() {
-            document.getElementById('gradeModal').classList.remove('active');
-        }
-        
-        function calculateGrade() {
-            const grade1 = parseFloat(document.getElementById('grade1').value) || 0;
-            const grade2 = parseFloat(document.getElementById('grade2').value) || 0;
-            const examGrade = parseFloat(document.getElementById('examGrade').value) || 0;
-            
-            const finalGrade = (grade1 * 0.3) + (grade2 * 0.3) + (examGrade * 0.4);
-            document.getElementById('finalGrade').value = finalGrade.toFixed(1);
-        }
-        
-        function saveGrade() {
-            alert('Nota guardada exitosamente!');
-            closeGradeModal();
-        }
-        
-        function showUpcoming() {
-            alert('Próximas entregas: Proyecto BD (25 Sep), Ensayo Programación (28 Sep)');
-        }
-        
-        function exportData() {
-            alert('Datos exportados exitosamente!');
-        }
-    </script>
+    <script src="resources/js/app.js"></script>
 </body>
 </html>

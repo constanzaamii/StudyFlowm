@@ -186,91 +186,7 @@
     </style>
 </head>
 
-        .task-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.5rem;
-        }
-
-        .task-title {
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.25rem;
-        }
-
-        .task-completed {
-            text-decoration: line-through;
-            opacity: 0.6;
-        }
-
-        .task-subject {
-            background: var(--primary-color);
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .task-due {
-            color: var(--muted-color);
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .task-priority {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-weight: 500;
-        }
-
-        .priority-high {
-            background: #fee2e2;
-            color: var(--danger-color);
-        }
-
-        .priority-medium {
-            background: #fef3c7;
-            color: var(--warning-color);
-        }
-
-        .priority-low {
-            background: #d1fae5;
-            color: var(--success-color);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .btn-primary:hover {
-            background-color: #1d4ed8;
-            border-color: #1d4ed8;
-        }
-
-        .text-primary {
-            color: var(--primary-color) !important;
-        }
-
-        .bg-primary {
-            background-color: var(--primary-color) !important;
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1055;
-            min-width: 300px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            border: none;
-        }
-    </style>
-    
-    @stack('styles')
+  
 </head>
 <body>
     <!-- Navigation -->
@@ -287,7 +203,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto">
                     <a href="{{ route('dashboard') }}" class="nav-link fw-medium {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                        Dashboard
+                        <i class="bi bi-house"></i> Dashboard
+                    </a>
+                    <a href="{{ route('tasks.index') }}" class="nav-link fw-medium {{ request()->routeIs('tasks.*') ? 'active' : '' }}">
+                        <i class="bi bi-check2-square"></i> Tareas
+                    </a>
+                    <a href="{{ route('grades.index') }}" class="nav-link fw-medium {{ request()->routeIs('grades.*') ? 'active' : '' }}">
+                        <i class="bi bi-graph-up"></i> Notas
                     </a>
                     @auth
                     <div class="nav-item dropdown">

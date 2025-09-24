@@ -217,8 +217,17 @@ body::after {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Navegación específica para diferentes contextos */
+.navbar .nav {
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
 .nav-link {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--foreground);
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -258,7 +267,51 @@ body::after {
 
 /* Asegurar que el texto sea visible en todos los estados */
 .nav-link {
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Mejor contraste para modo claro */
+[data-theme="light"] .nav-link {
+  color: var(--muted-foreground);
+  text-shadow: none;
+}
+
+[data-theme="light"] .nav-link:hover,
+[data-theme="light"] .nav-link.active {
+  color: var(--foreground);
+}
+
+/* Mejor contraste para modo oscuro */
+[data-theme="dark"] .nav-link {
+  color: var(--muted-foreground);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="dark"] .nav-link:hover,
+[data-theme="dark"] .nav-link.active {
+  color: var(--foreground);
+}
+
+/* Estilos para la navegación de Bootstrap */
+.navbar-nav .nav-link {
+  color: var(--muted-foreground) !important;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: var(--foreground) !important;
+}
+
+/* Asegurar visibilidad en navbar light */
+.navbar-light .navbar-nav .nav-link {
+  color: rgba(0, 0, 0, 0.75) !important;
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link.active {
+  color: var(--primary) !important;
 }
 
 /* Theme Toggle Button */

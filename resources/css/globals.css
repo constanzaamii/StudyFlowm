@@ -173,12 +173,33 @@ body {
   color: var(--muted-foreground);
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .nav-link:hover,
 .nav-link.active {
   color: var(--foreground);
+}
+
+/* Estilos específicos para navegación Bootstrap */
+.navbar-nav .nav-link {
+  color: var(--muted-foreground) !important;
+  font-weight: 600;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: var(--primary) !important;
+}
+
+/* Asegurar visibilidad en navbar light */
+.navbar-light .navbar-nav .nav-link {
+  color: rgba(0, 0, 0, 0.75) !important;
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link.active {
+  color: var(--primary) !important;
 }
 
 /* Main Layout */
