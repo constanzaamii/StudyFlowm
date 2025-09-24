@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyFlow - Gestión Académica UCSC</title>
+    <link rel="stylesheet" href="styles/globals.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">📚 StudyFlow</div>
+                <nav class="nav">
+                    <a href="#dashboard" class="nav-link active">Dashboard</a>
+                    <a href="#tasks" class="nav-link">Tareas</a>
+                    <a href="#grades" class="nav-link">Notas</a>
+                    <a href="#calendar" class="nav-link">Calendario</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Welcome Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title">¡Bienvenido a StudyFlow! 🎓</h1>
+                    <p class="card-description">
+                        Tu sistema de gestión académica para organizar tareas, calcular notas y hacer seguimiento de tu progreso universitario.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalTasks">12</div>
+                    <div class="stat-label">Tareas Totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingTasks">5</div>
+                    <div class="stat-label">Pendientes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="averageGrade">6.2</div>
+                    <div class="stat-label">Promedio General</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="completedTasks">7</div>
+                    <div class="stat-label">Completadas</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Main Content Area -->
+                <div>
+                    <!-- Tasks Section -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h2 class="card-title">Mis Tareas</h2>
+                                    <p class="card-description">Organiza y gestiona tus entregas académicas</p>
+                                </div>
+                                <button class="btn btn-primary" onclick="openTaskModal()">
+                                    ➕ Nueva Tarea
+                                </button>
+                            </div>
+                        </div>
+                        <div class="task-list" id="taskList">
+                            <!-- Sample Tasks -->
+                            <div class="task-item">
+                                <div class="task-header">
+                                    <div>
+                                        <div class="task-title">Proyecto Final Base de Datos</div>
+                                        <span class="task-subject">Base de Datos</span>
+                                    </div>
+                                    <span class="task-priority priority-high">Alta</span>
+                                </div>
+                                <div class="task-due">📅 Vence: 25 Sep 2024, 23:59</div>
+                                <p style="color: var(--muted-foreground); font-size: 0.875rem;">Implementar sistema completo con CRUD y consultas avanzadas</p>
+                            </div>
+                            
+                            <div class="task-item">
+                                <div class="task-header">
+                                    <div>
+                                        <div class="task-title">Ensayo Algoritmos de Ordenamiento</div>
+                                        <span class="task-subject">Programación</span>
+                                    </div>
+                                    <span class="task-priority priority-medium">Media</span>
+                                </div>
+                                <div class="task-due">📅 Vence: 28 Sep 2024, 18:00</div>
+                                <p style="color: var(--muted-foreground); font-size: 0.875rem;">Análisis comparativo de quicksort vs mergesort</p>
+                            </div>
+                            
+                            <div class="task-item">
+                                <div class="task-header">
+                                    <div>
+                                        <div class="task-title">Ejercicios Cálculo Integral</div>
+                                        <span class="task-subject">Matemáticas</span>
+                                    </div>
+                                    <span class="task-priority priority-low">Baja</span>
+                                </div>
+                                <div class="task-due">📅 Vence: 30 Sep 2024, 12:00</div>
+                                <p style="color: var(--muted-foreground); font-size: 0.875rem;">Resolver ejercicios del capítulo 7</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div>
+                    <!-- Quick Actions -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Acciones Rápidas</h3>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button class="btn btn-secondary" onclick="openGradeModal()">
+                                📊 Calcular Notas
+                            </button>
+                            <button class="btn btn-secondary" onclick="showUpcoming()">
+                                ⏰ Próximas Entregas
+                            </button>
+                            <button class="btn btn-secondary" onclick="exportData()">
+                                📤 Exportar Datos
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Actividad Reciente</h3>
+                        </div>
+                        <div id="recentActivity">
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                                <div style="font-size: 0.875rem; font-weight: 500;">Tarea completada</div>
+                                <div style="font-size: 0.75rem; color: var(--muted-foreground);">Laboratorio Física - hace 2 horas</div>
+                            </div>
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                                <div style="font-size: 0.875rem; font-weight: 500;">Nueva nota registrada</div>
+                                <div style="font-size: 0.75rem; color: var(--muted-foreground);">Programación: 6.5 - hace 1 día</div>
+                            </div>
+                            <div style="padding: 0.5rem 0;">
+                                <div style="font-size: 0.875rem; font-weight: 500;">Recordatorio creado</div>
+                                <div style="font-size: 0.75rem; color: var(--muted-foreground);">Examen Matemáticas - hace 2 días</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Nueva Tarea</h3>
+                <button class="close-btn" onclick="closeTaskModal()">&times;</button>
+            </div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label class="form-label">Título de la Tarea</label>
+                    <input type="text" class="form-input" id="taskTitle" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Asignatura</label>
+                    <select class="form-select" id="taskSubject" required>
+                        <option value="">Seleccionar asignatura</option>
+                        <option value="Programación">Programación</option>
+                        <option value="Base de Datos">Base de Datos</option>
+                        <option value="Matemáticas">Matemáticas</option>
+                        <option value="Inglés">Inglés</option>
+                        <option value="Física">Física</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-textarea" id="taskDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha de Entrega</label>
+                    <input type="datetime-local" class="form-input" id="taskDueDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prioridad</label>
+                    <select class="form-select" id="taskPriority" required>
+                        <option value="low">Baja</option>
+                        <option value="medium">Media</option>
+                        <option value="high">Alta</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar Tarea</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeTaskModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grade Modal -->
+    <div class="modal" id="gradeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Calculadora de Notas</h3>
+                <button class="close-btn" onclick="closeGradeModal()">&times;</button>
+            </div>
+            <form id="gradeForm">
+                <div class="form-group">
+                    <label class="form-label">Asignatura</label>
+                    <select class="form-select" id="gradeSubject" required>
+                        <option value="">Seleccionar asignatura</option>
+                        <option value="Programación">Programación</option>
+                        <option value="Base de Datos">Base de Datos</option>
+                        <option value="Matemáticas">Matemáticas</option>
+                        <option value="Inglés">Inglés</option>
+                        <option value="Física">Física</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nota 1 (30%)</label>
+                    <input type="number" class="form-input" id="grade1" min="1" max="7" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nota 2 (30%)</label>
+                    <input type="number" class="form-input" id="grade2" min="1" max="7" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Examen (40%)</label>
+                    <input type="number" class="form-input" id="examGrade" min="1" max="7" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Promedio Final</label>
+                    <input type="text" class="form-input" id="finalGrade" readonly>
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" class="btn btn-primary" onclick="calculateGrade()">Calcular</button>
+                    <button type="button" class="btn btn-success" onclick="saveGrade()">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeGradeModal()">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample JavaScript functionality
+        function openTaskModal() {
+            document.getElementById('taskModal').classList.add('active');
+        }
+        
+        function closeTaskModal() {
+            document.getElementById('taskModal').classList.remove('active');
+        }
+        
+        function openGradeModal() {
+            document.getElementById('gradeModal').classList.add('active');
+        }
+        
+        function closeGradeModal() {
+            document.getElementById('gradeModal').classList.remove('active');
+        }
+        
+        function calculateGrade() {
+            const grade1 = parseFloat(document.getElementById('grade1').value) || 0;
+            const grade2 = parseFloat(document.getElementById('grade2').value) || 0;
+            const examGrade = parseFloat(document.getElementById('examGrade').value) || 0;
+            
+            const finalGrade = (grade1 * 0.3) + (grade2 * 0.3) + (examGrade * 0.4);
+            document.getElementById('finalGrade').value = finalGrade.toFixed(1);
+        }
+        
+        function saveGrade() {
+            alert('Nota guardada exitosamente!');
+            closeGradeModal();
+        }
+        
+        function showUpcoming() {
+            alert('Próximas entregas: Proyecto BD (25 Sep), Ensayo Programación (28 Sep)');
+        }
+        
+        function exportData() {
+            alert('Datos exportados exitosamente!');
+        }
+    </script>
+</body>
+</html>

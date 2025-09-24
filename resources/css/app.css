@@ -1,0 +1,109 @@
+@import "bootstrap";
+
+/* StudyFlow Custom Styles */
+:root {
+  --primary-color: #4f46e5;
+  --secondary-color: #6b7280;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --dark-color: #1f2937;
+  --light-color: #f9fafb;
+}
+
+body {
+  background-color: var(--light-color);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: var(--primary-color) !important;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.stats-card {
+  background: linear-gradient(135deg, var(--primary-color), #6366f1);
+  color: white;
+}
+
+.stats-card .card-body {
+  padding: 2rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+  border-color: #4338ca;
+}
+
+.nav-pills .nav-link.active {
+  background-color: var(--primary-color);
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.view {
+  min-height: 400px;
+}
+
+.modal-header {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 1rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
