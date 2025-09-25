@@ -16,7 +16,6 @@
                     <a href="/" class="nav-link">Dashboard</a>
                     <a href="/tasks" class="nav-link active">Tareas</a>
                     <a href="/grades" class="nav-link">Notas</a>
-                    <a href="#calendar" class="nav-link">Calendario</a>
                 </nav>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
                     <span class="theme-icon">🌙</span>
@@ -289,7 +288,7 @@ async function loadTasks() {
     const loading = document.getElementById('loading');
     
     try {
-        const res = await fetch('/tasks');
+        const res = await fetch('/api/tasks');
         allTasks = await res.json();
         loading.remove();
 
@@ -335,11 +334,12 @@ function createTaskElement(task) {
     if (isOverdue) dueDateClass = 'style="color: var(--destructive);"';
     else if (isToday) dueDateClass = 'style="color: var(--warning);"';
 
+    const subjectName = task.subject && task.subject.name ? task.subject.name : 'Sin asignatura';
     taskDiv.innerHTML = `
         <div class="task-header">
             <div>
-                <div class="task-title" ${task.status === 'completed' ? 'style="text-decoration: line-through; opacity: 0.6;"' : ''}>${task.title}</div>
-                <span class="task-subject">${task.subject.name}</span>
+                <div class="task-title" ${task.status === 'completed' ? 'style=\"text-decoration: line-through; opacity: 0.6;\"' : ''}>${task.title}</div>
+                <span class="task-subject">${subjectName}</span>
             </div>
             <div class="flex gap-2">
                 <button class="btn btn-success" onclick="toggleTask('${task.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
@@ -353,7 +353,7 @@ function createTaskElement(task) {
         <div class="task-due" ${dueDateClass}>
             📅 ${formatDate(dueDate)} ${isOverdue ? '(Vencida)' : isToday ? '(Hoy)' : ''}
         </div>
-        ${task.description ? `<p style="color: var(--muted-foreground); font-size: 0.875rem; margin-bottom: 0.5rem;">${task.description}</p>` : ''}
+        ${task.description ? `<p style=\"color: var(--muted-foreground); font-size: 0.875rem; margin-bottom: 0.5rem;\">${task.description}</p>` : ''}
         <span class="task-priority priority-${task.priority}">
             ${task.priority === 'high' ? '🔴 Alta' : task.priority === 'medium' ? '🟡 Media' : '🟢 Baja'}
         </span>

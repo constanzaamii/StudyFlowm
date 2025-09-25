@@ -12,16 +12,14 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Check if user is authenticated
+        // Si no hay usuario autenticado, mostrar datos de ejemplo
         if (!Auth::check()) {
-            // Show demo data for non-authenticated users
             $stats = [
-                'totalTasks' => 18,
-                'pendingTasks' => 12,
-                'completedTasks' => 6,
+                'totalTasks' => 6,
+                'pendingTasks' => 3,
+                'completedTasks' => 2,
                 'averageGrade' => 87.3,
             ];
-
             $recentTasks = collect([
                 (object) [
                     'id' => 1,
@@ -90,7 +88,6 @@ class DashboardController extends Controller
                     'subject' => (object) ['name' => 'Inglés', 'color' => '#06b6d4']
                 ],
             ]);
-
             $subjects = collect([
                 (object) ['id' => 1, 'name' => 'Literatura'],
                 (object) ['id' => 2, 'name' => 'Programación'],
@@ -99,7 +96,6 @@ class DashboardController extends Controller
                 (object) ['id' => 5, 'name' => 'Química'],
                 (object) ['id' => 6, 'name' => 'Inglés'],
             ]);
-
             $recentActivity = collect([
                 (object) [
                     'description' => 'Tarea completada: Ensayo de Historia',
@@ -114,7 +110,6 @@ class DashboardController extends Controller
                     'created_at' => now()->subDay(),
                 ],
             ]);
-
             return view('dashboard', compact('stats', 'recentTasks', 'subjects', 'recentActivity'));
         }
 

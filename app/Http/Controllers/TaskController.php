@@ -10,6 +10,71 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
+    // Métodos API para AJAX/Frontend SPA
+    public function apiIndex()
+    {
+    $tasks = Task::with('subject')->get();
+    return response()->json($tasks);
+    }
+
+    public function apiStore(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'subject_id' => 'required|exists:subjects,id',
+            'description' => 'nullable|string',
+            'due_date' => 'required|date',
+            'priority' => 'required|in:low,medium,high',
+        ]);
+
+        $task = Task::create([
+            'user_id' => Auth::id(),
+            'title' => $request->title,
+            'subject_id' => $request->subject_id,
+            'description' => $request->description,
+            'due_date' => $request->due_date,
+            'priority' => $request->priority,
+            'status' => 'pending',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tarea creada exitosamente',
+            'task' => $task->load('subject')
+        ]);
+    }
+
+    public function apiUpdate(Request $request, Task $task)
+    {
+        // Público: no se valida el usuario
+
+        $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'subject_id' => 'sometimes|required|exists:subjects,id',
+            'description' => 'nullable|string',
+            'due_date' => 'sometimes|required|date',
+            'priority' => 'sometimes|required|in:low,medium,high',
+            'status' => 'sometimes|required|in:pending,in_progress,completed,overdue',
+        ]);
+
+        $task->update($request->all());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tarea actualizada exitosamente',
+            'task' => $task->load('subject')
+        ]);
+    }
+
+    public function apiDestroy(Task $task)
+    {
+        // Público: no se valida el usuario
+        $task->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Tarea eliminada exitosamente'
+        ]);
+    }
     public function index()
     {
         // Si es una petición AJAX/API, devolver JSON

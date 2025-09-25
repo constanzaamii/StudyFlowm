@@ -16,7 +16,6 @@
                     <a href="/" class="nav-link active">Dashboard</a>
                     <a href="/tasks" class="nav-link">Tareas</a>
                     <a href="/grades" class="nav-link">Notas</a>
-                    <a href="#calendar" class="nav-link">Calendario</a>
                 </nav>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
                     <span class="theme-icon">🌙</span>
@@ -76,7 +75,36 @@
                             </div>
                         </div>
                         <div class="task-list" id="taskList">
-                           
+                            @forelse($recentTasks as $task)
+                                <div class="task-item">
+                                    <div class="task-header">
+                                        <div>
+                                            <div class="task-title" @if($task->status === 'completed') style="text-decoration: line-through; opacity: 0.6;" @endif>{{ $task->title }}</div>
+                                            <span class="task-subject">{{ $task->subject->name ?? 'Sin asignatura' }}</span>
+                                        </div>
+                                        <span class="task-priority priority-{{ $task->priority }}">
+                                            @if($task->priority === 'high') 🔴 Alta
+                                            @elseif($task->priority === 'medium') 🟡 Media
+                                            @else 🟢 Baja
+                                            @endif
+                                        </span>
+                                    </div>
+                                    <div class="task-due">
+                                        📅 {{ \Carbon\Carbon::parse($task->due_date)->format('d/m/Y H:i') }}
+                                        @if($task->status !== 'completed' && \Carbon\Carbon::parse($task->due_date)->isPast()) (Vencida)
+                                        @elseif(\Carbon\Carbon::parse($task->due_date)->isToday()) (Hoy)
+                                        @endif
+                                    </div>
+                                    @if($task->description)
+                                        <p style="color: var(--muted-foreground); font-size: 0.875rem; margin-bottom: 0.5rem;">{{ $task->description }}</p>
+                                    @endif
+                                </div>
+                            @empty
+                                <div class="text-center" style="padding: 2rem; color: var(--muted-foreground);">
+                                    <p>No hay tareas registradas</p>
+                                    <p style="font-size: 0.875rem;">¡Crea tu primera tarea para comenzar!</p>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>

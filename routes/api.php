@@ -14,6 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+
+// Rutas API para tareas (sin autenticación, modo demo)
+Route::get('/tasks', [App\Http\Controllers\TaskController::class, 'apiIndex']);
+Route::post('/tasks', [App\Http\Controllers\TaskController::class, 'apiStore']);
+Route::put('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'apiUpdate']);
+Route::delete('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'apiDestroy']);
+
+// Ruta API para asignaturas
+Route::get('/subjects', function() {
+	return \App\Models\Subject::select('id', 'name')->get();
 });

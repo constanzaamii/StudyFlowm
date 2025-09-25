@@ -16,7 +16,6 @@
                     <a href="/" class="nav-link">Dashboard</a>
                     <a href="/tasks" class="nav-link">Tareas</a>
                     <a href="/grades" class="nav-link active">Notas</a>
-                    <a href="#calendar" class="nav-link">Calendario</a>
                 </nav>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
                     <span class="theme-icon">🌙</span>
