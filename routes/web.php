@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\AuthController;
 use App\Models\User;
+use App\Models\Task;
 use Illuminate\Support\Facades\Hash;
 
 // Registro
@@ -34,16 +36,18 @@ Route::get('/login', function() {
     return view('login');
 })->name('login');
 
-Route::post('/login', function(Request $request) {
-    $credentials = $request->only('email', 'password');
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        return redirect()->intended('/');
-    }
-    return back()->with('error', 'Credenciales incorrectas');
-});
+Route::post('/login', [AuthController::class, 'webLogin']);
 
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+// Logout
+Route::post('/logout', [AuthController::class, 'webLogout'])->name('logout');
+
+Route::get('/', [DashboardController::class, 'index'])->name('home');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+// Dashboard simple para debugging
+Route::get('/test', function() {
+    return view('dashboard-simple');
+});
 Route::resource('tasks', TaskController::class);
 Route::resource('grades', GradeController::class);
 Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggle'])->name('tasks.toggle');
@@ -62,4 +66,46 @@ Route::prefix('api')->group(function () {
     Route::get('/subjects', function() {
         return \App\Models\Subject::select('id', 'name')->get();
     });
+});
+
+// Ruta temporal de debug
+Route::get('/debug', function() {
+    $users = User::with('tasks')->get();
+    
+    echo "<h2>Debug de Usuarios y Tareas</h2>";
+    
+    foreach($users as $user) {
+        echo "<p>Usuario: {$user->email} (ID: {$user->id}) - Tareas: {$user->tasks->count()}</p>";
+        
+        foreach($user->tasks as $task) {
+            echo "<li>{$task->title} - Subject ID: {$task->subject_id} - Status: {$task->status}</li>";
+        }
+    }
+    
+    echo "<hr><h3>Todas las tareas:</h3>";
+    $allTasks = Task::with('subject', 'user')->get();
+    foreach($allTasks as $task) {
+        echo "<p>Tarea: {$task->title} - Usuario: {$task->user->email} - Materia: " . ($task->subject ? $task->subject->name : 'Sin materia') . "</p>";
+    }
+});
+
+// Debug endpoint para tareas sin autenticación
+Route::get('/debug-tasks', function() {
+    $tasks = Task::with('subject', 'user')->get();
+    return response()->json($tasks);
+});
+
+// Test de carga de tareas para usuario específico
+Route::get('/test-tasks/{userId}', function($userId) {
+    $user = User::findOrFail($userId);
+    $tasks = Task::where('user_id', $userId)
+                 ->with('subject')
+                 ->orderBy('due_date', 'asc')
+                 ->get();
+                 
+    return response()->json([
+        'user' => $user->email,
+        'tasks_count' => $tasks->count(),
+        'tasks' => $tasks
+    ]);
 });

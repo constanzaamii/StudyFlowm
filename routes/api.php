@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,15 +15,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Rutas de autenticación (públicas)
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
 
-// Rutas API para tareas (sin autenticación, modo demo)
-Route::get('/tasks', [App\Http\Controllers\TaskController::class, 'apiIndex']);
-Route::post('/tasks', [App\Http\Controllers\TaskController::class, 'apiStore']);
-Route::put('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'apiUpdate']);
-Route::delete('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'apiDestroy']);
 
-// Ruta API para asignaturas
+// Ruta API para asignaturas (pública)
 Route::get('/subjects', function() {
 	return \App\Models\Subject::select('id', 'name')->get();
+});
+
+// Rutas protegidas por autenticación
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+    
+    // Rutas API para tareas
+    Route::get('/tasks', [App\Http\Controllers\TaskController::class, 'apiIndex']);
+    Route::post('/tasks', [App\Http\Controllers\TaskController::class, 'apiStore']);
+    Route::put('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'apiUpdate']);
+    Route::delete('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'apiDestroy']);
 });

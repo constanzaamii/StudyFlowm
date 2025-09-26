@@ -13,8 +13,8 @@ class TaskController extends Controller
     // Métodos API para AJAX/Frontend SPA
     public function apiIndex()
     {
-    $tasks = Task::with('subject')->get();
-    return response()->json($tasks);
+        $tasks = Auth::user()->tasks()->with('subject')->orderBy('due_date', 'asc')->get();
+        return response()->json($tasks);
     }
 
     public function apiStore(Request $request)
@@ -220,16 +220,21 @@ class TaskController extends Controller
 
     public function toggle($taskId)
     {
-        // Para propósitos de demostración, simular el cambio de estado
-        // En una aplicación real, esto actualizaría la base de datos
+        $task = Task::findOrFail($taskId);
+        
+        // Cambiar el estado de la tarea
+        if ($task->status === 'completed') {
+            $task->status = 'pending';
+        } else {
+            $task->status = 'completed';
+        }
+        
+        $task->save();
         
         return response()->json([
             'success' => true,
             'message' => 'Estado de tarea actualizado',
-            'task' => [
-                'id' => $taskId,
-                'status' => request()->input('status', 'completed')
-            ]
+            'task' => $task->load('subject')
         ]);
     }
 }

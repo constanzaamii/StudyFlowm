@@ -8,51 +8,256 @@ const taskForm = document.getElementById("taskForm")
 const gradeForm = document.getElementById("gradeForm")
 const taskSubjectSelect = document.getElementById("taskSubject")
 
+// Authentication
+let authToken = localStorage.getItem('auth_token')
+let currentUser = null
+
+// Headers for authenticated requests
+function getAuthHeaders() {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`
+    }
+    
+    // Add CSRF token for non-API routes
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (csrfToken) {
+        headers['X-CSRF-TOKEN'] = csrfToken;
+    }
+    
+    return headers
+}
+
 // Cargar asignaturas desde la API y poblar el select
 async function loadSubjects() {
-  if (!taskSubjectSelect) return;
+  if (!taskSubjectSelect) {
+    console.log("taskSubjectSelect no encontrado")
+    return;
+  }
   try {
+    console.log("Cargando asignaturas...")
     const res = await fetch('/api/subjects');
     const subjects = await res.json();
     taskSubjectSelect.innerHTML = '<option value="">Seleccionar asignatura</option>';
     subjects.forEach(subject => {
       taskSubjectSelect.innerHTML += `<option value="${subject.id}">${subject.name}</option>`;
     });
+    console.log("Asignaturas cargadas:", subjects.length)
   } catch (err) {
-    taskSubjectSelect.innerHTML = '<option value="">Error al cargar asignaturas</option>';
-    console.error(err);
+    if (taskSubjectSelect) {
+      taskSubjectSelect.innerHTML = '<option value="">Error al cargar asignaturas</option>';
+    }
+    console.error("Error cargando asignaturas:", err);
   }
 }
 
 // Initialize app
 document.addEventListener("DOMContentLoaded", () => {
   console.log("StudyFlow App iniciada correctamente")
-  loadTasks()
-  // updateStats() // Si tienes estadísticas, actualízalas con datos de la API
-  // loadRecentActivity() // Si tienes actividad, actualízala con datos reales
+  
+  // Check if user is already logged in
+  const storedToken = localStorage.getItem('auth_token')
+  const storedUser = localStorage.getItem('current_user')
+  
+  if (storedToken && storedUser) {
+    authToken = storedToken
+    currentUser = JSON.parse(storedUser)
+    console.log("Usuario encontrado en localStorage:", currentUser.email)
+  }
+  
+  updateAuthUI()
+  
+  // Solo cargar tareas si hay usuario autenticado
+  if (authToken && currentUser) {
+    loadTasks()
+    loadSubjects()
+  }
 
   // Set default due date to tomorrow
-  const tomorrow = new Date()
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  document.getElementById("taskDueDate").value = tomorrow.toISOString().slice(0, 16)
+  const dueDateInput = document.getElementById("taskDueDate")
+  if (dueDateInput) {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    dueDateInput.value = tomorrow.toISOString().slice(0, 16)
+  }
   
   console.log("Inicialización completada")
 })
 
+// Authentication functions
+async function login(email, password) {
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    })
+
+    const data = await res.json()
+    
+    if (data.success) {
+      authToken = data.access_token
+      currentUser = data.user
+      localStorage.setItem('auth_token', authToken)
+      localStorage.setItem('current_user', JSON.stringify(currentUser))
+      
+      console.log('Login exitoso para:', currentUser.email)
+      showNotification('Login exitoso', 'success')
+      
+      // Primero actualizar UI, luego cargar tareas
+      updateAuthUI()
+      
+      // Pequeña pausa para que la UI se actualice
+      setTimeout(() => {
+        loadTasks()
+      }, 100)
+      
+      return true
+    } else {
+      showNotification(data.message || 'Error de login', 'error')
+      return false
+    }
+  } catch (error) {
+    console.error('Error en login:', error)
+    showNotification('Error de conexión', 'error')
+    return false
+  }
+}
+
+async function logout() {
+  try {
+    if (authToken) {
+      await fetch('/api/logout', {
+        method: 'POST',
+        headers: getAuthHeaders()
+      })
+    }
+  } catch (error) {
+    console.error('Error en logout:', error)
+  } finally {
+    authToken = null
+    currentUser = null
+    localStorage.removeItem('auth_token')
+    localStorage.removeItem('current_user')
+    updateAuthUI()
+    showNotification('Sesión cerrada', 'success')
+  }
+}
+
+function updateAuthUI() {
+  // Update UI based on authentication status
+  const loginSection = document.getElementById('loginSection')
+  const userSection = document.getElementById('userSection')
+  const statsSection = document.getElementById('statsSection')
+  const mainContent = document.getElementById('mainContent')
+  
+  console.log("Actualizando UI. Usuario actual:", currentUser)
+  
+  if (currentUser && authToken) {
+    console.log("Mostrando UI autenticada")
+    // Ocultar login y mostrar contenido autenticado
+    if (loginSection) {
+      loginSection.style.display = 'none'
+    }
+    if (userSection) {
+      userSection.style.display = 'block'
+      userSection.innerHTML = `
+        <div class="card">
+          <div class="card-content" style="padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-weight: 500;">👋 Bienvenido, ${currentUser.first_name || currentUser.name}!</span>
+              <button class="btn btn-secondary" onclick="logout()" style="font-size: 0.875rem; padding: 0.5rem 1rem;">Cerrar Sesión</button>
+            </div>
+          </div>
+        </div>
+      `
+    }
+    if (statsSection) {
+      statsSection.style.display = 'grid'
+    }
+    if (mainContent) {
+      mainContent.style.display = 'grid'
+    }
+  } else {
+    console.log("Mostrando UI no autenticada")
+    if (loginSection) {
+      loginSection.style.display = 'block'
+    }
+    if (userSection) {
+      userSection.style.display = 'none'
+    }
+    if (statsSection) {
+      statsSection.style.display = 'none'
+    }
+    if (mainContent) {
+      mainContent.style.display = 'none'
+    }
+  }
+}
+
 // Task Management Functions usando API
 async function loadTasks() {
+  console.log('=== INICIO LOAD TASKS ===')
+  console.log('Cargando tareas...')
+  console.log('Token disponible:', !!authToken)
+  console.log('Token valor:', authToken)
+  console.log('Usuario actual:', currentUser)
+  
+  const taskListElement = document.getElementById("taskList")
+  console.log('TaskList element found:', !!taskListElement)
+  console.log('TaskList element:', taskListElement)
+  
+  if (!authToken) {
+    console.log('No hay token de autenticación')
+    if (taskListElement) {
+      taskListElement.innerHTML = `
+        <div class="text-center" style="padding: 2rem; color: var(--muted-foreground);">
+          <p>Debes iniciar sesión para ver tus tareas</p>
+        </div>
+      `
+    }
+    return
+  }
+
+  if (!taskListElement) {
+    console.log('No se encontró el elemento taskList')
+    return
+  }
+
   try {
-    const res = await fetch('/api/tasks')
+    console.log('Haciendo petición a /api/tasks')
+    const res = await fetch('/api/tasks', {
+      headers: getAuthHeaders()
+    })
+    
+    console.log('Response status:', res.status)
+    
+    if (res.status === 401) {
+      showNotification('Sesión expirada', 'error')
+      logout()
+      return
+    }
+    
     const tasks = await res.json()
-    taskList.innerHTML = ""
+    console.log('Tareas obtenidas:', tasks.length, tasks)
+    
+    taskListElement.innerHTML = ""
 
     if (tasks.length === 0) {
-      taskList.innerHTML = `
+      taskListElement.innerHTML = `
               <div class="text-center" style="padding: 2rem; color: var(--muted-foreground);">
                   <p>No hay tareas registradas</p>
                   <p style="font-size: 0.875rem;">¡Crea tu primera tarea para comenzar!</p>
               </div>
           `
+      // Actualizar estadísticas
+      updateStats([])
       return
     }
 
@@ -61,11 +266,156 @@ async function loadTasks() {
 
     tasks.forEach((task) => {
       const taskElement = createTaskElement(task)
-      taskList.appendChild(taskElement)
+      taskListElement.appendChild(taskElement)
     })
+    
+    // Actualizar estadísticas
+    updateStats(tasks)
+    
   } catch (error) {
-    taskList.innerHTML = `<div style='color: red;'>Error al cargar tareas</div>`
-    console.error(error)
+    console.error('Error al cargar tareas:', error)
+    if (taskListElement) {
+      taskListElement.innerHTML = `<div style='color: red;'>Error al cargar tareas: ${error.message}</div>`
+    }
+  }
+}
+
+// Función para actualizar estadísticas
+function updateStats(tasks) {
+  console.log('Actualizando estadísticas con', tasks.length, 'tareas')
+  
+  const totalTasks = tasks.length
+  const pendingTasks = tasks.filter(t => t.status === 'pending' || t.status === 'in_progress').length
+  const completedTasks = tasks.filter(t => t.status === 'completed').length
+  
+  const totalTasksElement = document.getElementById("totalTasks")
+  const pendingTasksElement = document.getElementById("pendingTasks")
+  const completedTasksElement = document.getElementById("completedTasks")
+  
+  if (totalTasksElement) totalTasksElement.textContent = totalTasks
+  if (pendingTasksElement) pendingTasksElement.textContent = pendingTasks
+  if (completedTasksElement) completedTasksElement.textContent = completedTasks
+  
+  console.log('Estadísticas actualizadas:', { totalTasks, pendingTasks, completedTasks })
+}
+
+// Función de test temporal
+async function testLoadTasks() {
+  console.log('=== TEST LOAD TASKS ===')
+  console.log('Token actual:', authToken)
+  console.log('Usuario actual:', currentUser)
+  
+  const taskListElement = document.getElementById("taskList")
+  
+  if (!taskListElement) {
+    console.log('No se encontró taskList')
+    return
+  }
+
+  // Test 1: Sin autenticación
+  try {
+    console.log('=== TEST 1: Sin autenticación ===')
+    const res1 = await fetch('/debug-tasks')
+    const allTasks = await res1.json()
+    console.log('Todas las tareas (sin auth):', allTasks.length)
+    
+    // Test 2: Con autenticación (si existe)
+    if (authToken) {
+      console.log('=== TEST 2: Con autenticación ===')
+      const res2 = await fetch('/api/tasks', {
+        headers: getAuthHeaders()
+      })
+      console.log('Response status:', res2.status)
+      
+      if (res2.ok) {
+        const userTasks = await res2.json()
+        console.log('Tareas del usuario autenticado:', userTasks.length)
+        
+        // Mostrar las tareas del usuario
+        taskListElement.innerHTML = ""
+        if (userTasks.length === 0) {
+          taskListElement.innerHTML = `<div>Usuario no tiene tareas</div>`
+        } else {
+          userTasks.forEach((task) => {
+            const taskElement = document.createElement('div')
+            taskElement.className = 'task-item'
+            taskElement.innerHTML = `
+              <h4>${task.title}</h4>
+              <p>Materia: ${task.subject ? task.subject.name : 'Sin materia'}</p>
+              <p>Estado: ${task.status}</p>
+              <p>Fecha: ${task.due_date}</p>
+            `
+            taskListElement.appendChild(taskElement)
+          })
+        }
+      } else {
+        console.log('Error en API autenticada:', await res2.text())
+        taskListElement.innerHTML = `<div>Error de autenticación</div>`
+      }
+    } else {
+      console.log('No hay token, mostrando todas las tareas')
+      taskListElement.innerHTML = ""
+      allTasks.forEach((task) => {
+        const taskElement = document.createElement('div')
+        taskElement.className = 'task-item'
+        taskElement.innerHTML = `
+          <h4>${task.title}</h4>
+          <p>Usuario: ${task.user ? task.user.email : 'Sin usuario'}</p>
+          <p>Materia: ${task.subject ? task.subject.name : 'Sin materia'}</p>
+          <p>Estado: ${task.status}</p>
+        `
+        taskListElement.appendChild(taskElement)
+      })
+    }
+    
+  } catch (error) {
+    console.error('Error en test:', error)
+    taskListElement.innerHTML = `<div>Error: ${error.message}</div>`
+  }
+}
+
+// Llamar test después de 2 segundos
+setTimeout(() => {
+  console.log('Ejecutando test de carga de tareas...')
+  testLoadTasks()
+}, 2000)
+
+// Modal functions
+function openTaskModal() {
+  console.log('Abriendo modal de tarea')
+  const modal = document.getElementById('taskModal')
+  if (modal) {
+    modal.style.display = 'block'
+    // Cargar asignaturas cuando se abre el modal
+    loadSubjects()
+  } else {
+    console.error('Modal de tarea no encontrado')
+  }
+}
+
+function closeTaskModal() {
+  const modal = document.getElementById('taskModal')
+  if (modal) {
+    modal.style.display = 'none'
+    // Limpiar formulario
+    const form = document.getElementById('taskForm')
+    if (form) {
+      form.reset()
+    }
+  }
+}
+
+function openGradeModal() {
+  const modal = document.getElementById('gradeModal')
+  if (modal) {
+    modal.style.display = 'block'
+  }
+}
+
+function closeGradeModal() {
+  const modal = document.getElementById('gradeModal')
+  if (modal) {
+    modal.style.display = 'none'
   }
 }
 
@@ -241,10 +591,7 @@ if (taskForm) {
     try {
       const res = await fetch('/api/tasks', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           title,
           subject_id,
@@ -254,17 +601,23 @@ if (taskForm) {
         })
       });
 
+      if (res.status === 401) {
+        showNotification('Sesión expirada', 'error');
+        logout();
+        return;
+      }
+
       if (res.ok) {
         await loadTasks();
         closeTaskModal();
-        alert('Tarea guardada correctamente');
+        showNotification('Tarea guardada correctamente', 'success');
       } else {
         const error = await res.json();
-        alert('Error al guardar tarea: ' + (error.message || 'Verifica los datos.'));
+        showNotification('Error al guardar tarea: ' + (error.message || 'Verifica los datos.'), 'error');
       }
     } catch (err) {
       console.error(err);
-      alert('Error de red al guardar tarea.');
+      showNotification('Error de red al guardar tarea.', 'error');
     }
   });
 }

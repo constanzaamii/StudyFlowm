@@ -37,6 +37,11 @@ class Task extends Model
         return $this->belongsTo(Subject::class);
     }
 
+    public function reminders()
+    {
+        return $this->hasMany(Reminder::class);
+    }
+
     // Accessors
     public function getIsOverdueAttribute()
     {
