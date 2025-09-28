@@ -2,13 +2,13 @@
 
 ## 📚 Descripción del Proyecto
 
-**StudyFlow** es un sistema de gestión académica desarrollado para el Hackathón UCSC 2024, enfocado en el **Eje 2: Gestión académica básica**. La aplicación permite a los estudiantes de Ingeniería de Ejecución en Informática organizar sus tareas, calcular notas, hacer seguimiento de su progreso académico y gestionar recordatorios.
+**StudyFlow** es un sistema de gestión académica desarrollado para el Hackathón UCSC 2024, enfocado en el **Eje 2: Gestión académica básica**. La aplicación permite a los estudiantes  organizar sus tareas, calcular notas, hacer seguimiento de su progreso académico y gestionar recordatorios.
 
 ## 🎯 Problema y Usuario Objetivo
 
 **Problema**: Los estudiantes universitarios necesitan una herramienta centralizada para organizar sus entregas académicas, calcular promedios de notas y hacer seguimiento de su progreso, especialmente durante los primeros años de carrera donde la carga académica puede ser abrumadora.
 
-**Usuario Objetivo**: Estudiantes de 1° y 2° año de Ingeniería de Ejecución en Informática de la UCSC que buscan mejorar su organización académica y rendimiento estudiantil.
+**Usuario Objetivo**: Estudiantes de 1° y 2° año de la UCSC que buscan mejorar su organización académica y rendimiento estudiantil.
 
 ## 🚀 Solución Propuesta (MVP)
 
@@ -175,18 +175,17 @@ studyflow-academic-manager/
 ## 🔮 Futuras Mejoras
 
 ### Corto Plazo:
-- [ ] Integración con base de datos real (MySQL/PostgreSQL)
 - [ ] Sistema de autenticación de usuarios
 - [ ] Notificaciones push y por email
-- [ ] Importación/exportación de datos académicos
-- [ ] Tema oscuro con Bootstrap variables CSS
+    
+
 
 ### Mediano Plazo:
 - [ ] Aplicación móvil nativa (React Native/Flutter)
 - [ ] Integración con sistemas académicos UCSC
 - [ ] Funcionalidades colaborativas (grupos de estudio)
 - [ ] Analytics avanzados de rendimiento
-- [ ] PWA (Progressive Web App) con Service Workers
+
 
 ### Largo Plazo:
 - [ ] IA para recomendaciones de estudio
