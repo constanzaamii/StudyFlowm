@@ -13,7 +13,12 @@ class TaskController extends Controller
     // Métodos API para AJAX/Frontend SPA
     public function apiIndex()
     {
-        $tasks = Auth::user()->tasks()->with('subject')->orderBy('due_date', 'asc')->get();
+        // Si no hay usuario autenticado, usar usuario por defecto (ID 1) para demo
+        $userId = Auth::id() ?? 1;
+        $tasks = \App\Models\Task::where('user_id', $userId)
+            ->with('subject')
+            ->orderBy('due_date', 'asc')
+            ->get();
         return response()->json($tasks);
     }
 
@@ -27,8 +32,15 @@ class TaskController extends Controller
             'priority' => 'required|in:low,medium,high',
         ]);
 
+        // Si no hay usuario autenticado, usar usuario por defecto (ID 1) o crear uno temporal
+        $userId = Auth::id();
+        if (!$userId) {
+            // Para testing/demo, usar usuario ID 1 o crear usuario demo
+            $userId = 1;
+        }
+
         $task = Task::create([
-            'user_id' => Auth::id(),
+            'user_id' => $userId,
             'title' => $request->title,
             'subject_id' => $request->subject_id,
             'description' => $request->description,

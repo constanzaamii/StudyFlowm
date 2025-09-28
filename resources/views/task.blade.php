@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>StudyFlow - Mis Tareas</title>
     <link rel="stylesheet" href="{{ asset('css/globals.css') }}">
 </head>
@@ -16,6 +17,7 @@
                     <a href="/" class="nav-link">Dashboard</a>
                     <a href="/tasks" class="nav-link active">Tareas</a>
                     <a href="/grades" class="nav-link">Notas</a>
+                    <a href="/profile" class="nav-link">👤 Perfil</a>
                 </nav>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
                     <span class="theme-icon">🌙</span>
@@ -70,7 +72,7 @@
                                 <select class="form-select" id="statusFilter" onchange="filterTasks()">
                                     <option value="">Todos</option>
                                     <option value="pending">Pendiente</option>
-                                    <option value="in_progress">En Progreso</option>
+                                    
                                     <option value="completed">Completada</option>
                                     <option value="overdue">Vencida</option>
                                 </select>
@@ -269,6 +271,24 @@
 .task-item-small.priority-low {
     border-left: 3px solid #059669;
 }
+
+/* Estilos para el texto de prioridad - color blanco */
+.task-priority.priority-high,
+.task-priority.priority-medium,
+.task-priority.priority-low {
+    color: #ffffff !important;
+}
+
+/* Estilos para el texto de las tareas en el calendario - color blanco */
+.task-item-small {
+    color: #ffffff !important;
+}
+
+.task-item-small.priority-high,
+.task-item-small.priority-medium,
+.task-item-small.priority-low {
+    color: #ffffff !important;
+}
 </style>
 
 <script>
@@ -279,25 +299,73 @@ let allTasks = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     await loadTasks();
+    await loadSubjects();
     initializeCalendar();
     setCalendarView('month');
 });
+
+async function loadSubjects() {
+    try {
+        const res = await fetch('/api/subjects', {
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        
+        if (res.ok) {
+            const subjects = await res.json();
+            const select = document.getElementById('taskSubject');
+            
+            // Limpiar opciones existentes excepto la primera
+            while (select.children.length > 1) {
+                select.removeChild(select.lastChild);
+            }
+            
+            // Agregar asignaturas
+            subjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.id;
+                option.textContent = subject.name;
+                select.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading subjects:', error);
+    }
+}
 
 async function loadTasks() {
     const container = document.getElementById('taskList');
     const loading = document.getElementById('loading');
     
     try {
-        const res = await fetch('/api/tasks');
-        allTasks = await res.json();
-        loading.remove();
+        const res = await fetch('/api/tasks', {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        allTasks = Array.isArray(data) ? data : [];
+        
+        if (loading) {
+            loading.remove();
+        }
 
         displayTasks(allTasks);
         updateCalendar();
 
     } catch (error) {
-        loading.innerText = 'Error al cargar tareas.';
-        console.error(error);
+        console.error('Error loading tasks:', error);
+        if (loading) {
+            loading.innerText = 'Error al cargar tareas. Por favor, recarga la página.';
+        }
+        allTasks = [];
     }
 }
 
@@ -343,10 +411,10 @@ function createTaskElement(task) {
             </div>
             <div class="flex gap-2">
                 <button class="btn btn-success" onclick="toggleTask('${task.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
-                    ${task.status === 'completed' ? '↩️' : '✅'}
+                    ${task.status === 'completed' ? 'Desmarcar' : 'Completar'}
                 </button>
                 <button class="btn btn-destructive" onclick="deleteTask('${task.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
-                    🗑️
+                Eliminar
                 </button>
             </div>
         </div>
@@ -577,29 +645,57 @@ function closeTaskModal() {
 }
 
 async function toggleTask(taskId) {
+    console.log('Toggling task with ID:', taskId);
     try {
-        const res = await fetch(`/tasks/${taskId}/toggle`, {
+        const res = await fetch(`/api/tasks/${taskId}/toggle`, {
             method: 'PATCH',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             }
         });
 
-        if (res.ok) {
+        const data = await res.json();
+        
+        if (res.ok && data.success) {
             await loadTasks(); // Recargar tareas
+            updateCalendar(); // Actualizar calendario
         } else {
-            alert('No se pudo actualizar la tarea.');
+            console.error('Error response:', data);
+            alert(data.message || 'No se pudo actualizar la tarea.');
         }
     } catch (err) {
-        console.error(err);
-        alert('Error al cambiar el estado de la tarea.');
+        console.error('Network error:', err);
+        alert('Error de conexión. Verifica tu conexión a internet.');
     }
 }
 
-function deleteTask(taskId) {
-    if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
-        // Implementar eliminación
-        alert('Funcionalidad de eliminación en desarrollo');
+async function deleteTask(taskId) {
+    console.log('Deleting task with ID:', taskId);
+    if (confirm('¿Estás seguro de que quieres eliminar esta tarea? Esta acción no se puede deshacer.')) {
+        try {
+            const res = await fetch(`/api/tasks/${taskId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+
+            const data = await res.json();
+            
+            if (res.ok && data.success) {
+                await loadTasks(); // Recargar tareas
+                updateCalendar(); // Actualizar calendario
+                alert('Tarea eliminada exitosamente');
+            } else {
+                console.error('Error response:', data);
+                alert(data.message || 'No se pudo eliminar la tarea.');
+            }
+        } catch (err) {
+            console.error('Network error:', err);
+            alert('Error de conexión. No se pudo eliminar la tarea.');
+        }
     }
 }
 
@@ -617,6 +713,50 @@ function toggleTheme() {
     const themeIcon = document.querySelector('.theme-icon');
     themeIcon.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
 }
+
+// Event listener para el formulario de tareas
+document.addEventListener('DOMContentLoaded', () => {
+    const taskForm = document.getElementById('taskForm');
+    if (taskForm) {
+        taskForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('taskTitle').value,
+                subject_id: document.getElementById('taskSubject').value,
+                description: document.getElementById('taskDescription').value,
+                due_date: document.getElementById('taskDueDate').value,
+                priority: document.getElementById('taskPriority').value
+            };
+            
+            try {
+                const res = await fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok && data.success) {
+                    closeTaskModal();
+                    await loadTasks();
+                    updateCalendar();
+                    alert('Tarea creada exitosamente');
+                } else {
+                    console.error('Error response:', data);
+                    alert(data.message || 'Error al crear la tarea');
+                }
+            } catch (err) {
+                console.error('Network error:', err);
+                alert('Error de conexión. No se pudo crear la tarea.');
+            }
+        });
+    }
+});
 </script>
 
 </body>

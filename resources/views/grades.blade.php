@@ -16,6 +16,7 @@
                     <a href="/" class="nav-link">Dashboard</a>
                     <a href="/tasks" class="nav-link">Tareas</a>
                     <a href="/grades" class="nav-link active">Notas</a>
+                    <a href="/profile" class="nav-link">👤 Perfil</a>
                 </nav>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
                     <span class="theme-icon">🌙</span>
@@ -252,6 +253,78 @@
         </div>
     </div>
 
+    <!-- Instructions Modal -->
+    <div class="modal" id="instructionsModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">📖 Instrucciones para Cargar Excel</h3>
+                <button class="close-btn" onclick="closeInstructionsModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <div class="instructions-content">
+                    <div class="instruction-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Formato del Archivo Excel</h4>
+                            <p>El archivo debe contener las siguientes columnas:</p>
+                            <div class="column-list">
+                                <div class="column-item">
+                                    <span class="column-name">Asignatura/Materia</span>
+                                    <span class="column-desc">Nombre de la asignatura</span>
+                                </div>
+                                <div class="column-item">
+                                    <span class="column-name">Codigo/Code</span>
+                                    <span class="column-desc">Código de la asignatura</span>
+                                </div>
+                                <div class="column-item">
+                                    <span class="column-name">Semestre</span>
+                                    <span class="column-desc">Número del semestre (1, 2, 3, etc.)</span>
+                                </div>
+                                <div class="column-item">
+                                    <span class="column-name">Creditos/Credits</span>
+                                    <span class="column-desc">Número de créditos</span>
+                                </div>
+                                <div class="column-item">
+                                    <span class="column-name">Estado/Status</span>
+                                    <span class="column-desc">completed, current, o pending</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="instruction-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Guardar el Archivo</h4>
+                            <p>Asegúrate de guardar el archivo en formato <strong>.xlsx</strong> o <strong>.xls</strong></p>
+                        </div>
+                    </div>
+                    
+                    <div class="instruction-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Subir el Archivo</h4>
+                            <p>Haz clic en el botón <strong>"Cargar Excel"</strong> para subir tu archivo</p>
+                        </div>
+                    </div>
+                    
+                    <div class="instruction-tip">
+                        <div class="tip-icon">💡</div>
+                        <div class="tip-content">
+                            <strong>Consejo:</strong> Utiliza la opción <strong>"Generar Ejemplo"</strong> para ver cómo debe verse tu archivo Excel.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer" style="margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="closeInstructionsModal()">
+                        ✓ Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <style>
 /* Tab Navigation Styles */
 .tab-navigation {
@@ -416,6 +489,130 @@
     height: 100%;
     background-color: var(--primary);
     transition: width 0.3s ease;
+}
+
+/* Instructions Modal Styles */
+.instructions-content {
+    line-height: 1.6;
+}
+
+.instruction-step {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: flex-start;
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark, #2563eb));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.step-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--foreground);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.step-content p {
+    margin: 0 0 0.75rem 0;
+    color: var(--muted-foreground);
+}
+
+.column-list {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-top: 0.75rem;
+}
+
+.column-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.column-item:last-child {
+    border-bottom: none;
+}
+
+.column-name {
+    font-weight: 600;
+    color: var(--primary);
+    font-family: 'Courier New', monospace;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.column-desc {
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+}
+
+.instruction-tip {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.tip-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.tip-content {
+    color: var(--foreground);
+    font-size: 0.95rem;
+}
+
+.tip-content strong {
+    color: var(--primary);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+/* Responsive adjustments for instructions modal */
+@media (max-width: 768px) {
+    .instruction-step {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .step-number {
+        align-self: flex-start;
+    }
+    
+    .column-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
 }
 </style>
 
@@ -881,20 +1078,11 @@ function showSubjectDetails(code) {
 }
 
 function showMallaInstructions() {
-    alert(`Instrucciones para cargar Excel:
+    document.getElementById('instructionsModal').classList.add('active');
+}
 
-1. El archivo debe tener las siguientes columnas:
-   - Asignatura/Materia: Nombre de la asignatura
-   - Codigo/Code: Código de la asignatura
-   - Semestre: Número del semestre (1, 2, 3, etc.)
-   - Creditos/Credits: Número de créditos
-   - Estado/Status: completed, current, o pending
-
-2. Guarda el archivo en formato .xlsx o .xls
-
-3. Haz clic en "Cargar Excel" para subir tu archivo
-
-También puedes usar "Generar Ejemplo" para ver cómo funciona.`);
+function closeInstructionsModal() {
+    document.getElementById('instructionsModal').classList.remove('active');
 }
 
 // Modal Functions
@@ -968,6 +1156,7 @@ document.getElementById('subjectForm').addEventListener('submit', function(e) {
 window.addEventListener('click', (e) => {
     const gradeModal = document.getElementById('gradeModal');
     const subjectModal = document.getElementById('subjectModal');
+    const instructionsModal = document.getElementById('instructionsModal');
     
     if (e.target === gradeModal) {
         closeGradeModal();
@@ -975,6 +1164,27 @@ window.addEventListener('click', (e) => {
     
     if (e.target === subjectModal) {
         closeSubjectModal();
+    }
+    
+    if (e.target === instructionsModal) {
+        closeInstructionsModal();
+    }
+});
+
+// Cerrar modales con tecla ESC
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const gradeModal = document.getElementById('gradeModal');
+        const subjectModal = document.getElementById('subjectModal');
+        const instructionsModal = document.getElementById('instructionsModal');
+        
+        if (gradeModal.classList.contains('active')) {
+            closeGradeModal();
+        } else if (subjectModal.classList.contains('active')) {
+            closeSubjectModal();
+        } else if (instructionsModal.classList.contains('active')) {
+            closeInstructionsModal();
+        }
     }
 });
 

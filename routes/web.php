@@ -28,7 +28,7 @@ Route::post('/register', function(Request $request) {
         'password' => Hash::make($request->password),
     ]);
     Auth::login($user);
-    return redirect('/');
+    return redirect()->route('dashboard');
 });
 
 // Login
@@ -41,23 +41,37 @@ Route::post('/login', [AuthController::class, 'webLogin']);
 // Logout
 Route::post('/logout', [AuthController::class, 'webLogout'])->name('logout');
 
-Route::get('/', [DashboardController::class, 'index'])->name('home');
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// Ruta principal redirige al login
+Route::get('/', function() {
+    return redirect()->route('login');
+})->name('home');
 
-// Dashboard simple para debugging
-Route::get('/test', function() {
-    return view('dashboard-simple');
+// Rutas protegidas que requieren autenticación
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Profile route
+    Route::get('/profile', function() {
+        return view('profile');
+    })->name('profile');
+    
+    // Dashboard simple para debugging
+    Route::get('/test', function() {
+        return view('dashboard-simple');
+    });
+    
+    Route::resource('tasks', TaskController::class);
+    Route::resource('grades', GradeController::class);
+    Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggle'])->name('tasks.toggle');
 });
-Route::resource('tasks', TaskController::class);
-Route::resource('grades', GradeController::class);
-Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggle'])->name('tasks.toggle');
 
-// API Routes for AJAX
-Route::prefix('api')->group(function () {
+// API Routes for AJAX (protegidas)
+Route::prefix('api')->middleware(['auth'])->group(function () {
     Route::get('/tasks', [TaskController::class, 'apiIndex']);
     Route::post('/tasks', [TaskController::class, 'apiStore']);
     Route::put('/tasks/{task}', [TaskController::class, 'apiUpdate']);
     Route::delete('/tasks/{task}', [TaskController::class, 'apiDestroy']);
+    Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggle']);
     
     Route::get('/grades', [GradeController::class, 'apiIndex']);
     Route::post('/grades', [GradeController::class, 'apiStore']);
@@ -107,5 +121,32 @@ Route::get('/test-tasks/{userId}', function($userId) {
         'user' => $user->email,
         'tasks_count' => $tasks->count(),
         'tasks' => $tasks
+    ]);
+});
+
+// Test route para probar la creación de tareas
+Route::post('/test-task', function(Request $request) {
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'subject_id' => 'required|exists:subjects,id',
+        'description' => 'nullable|string',
+        'due_date' => 'required|date',
+        'priority' => 'required|in:low,medium,high',
+    ]);
+
+    $task = Task::create([
+        'user_id' => 1, // Usuario por defecto
+        'title' => $request->title,
+        'subject_id' => $request->subject_id,
+        'description' => $request->description,
+        'due_date' => $request->due_date,
+        'priority' => $request->priority,
+        'status' => 'pending',
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Tarea creada exitosamente',
+        'task' => $task->load('subject')
     ]);
 });

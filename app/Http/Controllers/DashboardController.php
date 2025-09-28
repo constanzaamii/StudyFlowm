@@ -110,7 +110,25 @@ class DashboardController extends Controller
                     'created_at' => now()->subDay(),
                 ],
             ]);
-            return view('dashboard', compact('stats', 'recentTasks', 'subjects', 'recentActivity'));
+            
+            // Weekly progress data for demo
+            $weeklyProgress = [
+                ['week' => 'Sem 1', 'completed' => 8, 'pending' => 3, 'overdue' => 1],
+                ['week' => 'Sem 2', 'completed' => 12, 'pending' => 2, 'overdue' => 0],
+                ['week' => 'Sem 3', 'completed' => 6, 'pending' => 5, 'overdue' => 2],
+                ['week' => 'Sem 4', 'completed' => 10, 'pending' => 1, 'overdue' => 0],
+                ['week' => 'Sem 5', 'completed' => 4, 'pending' => 8, 'overdue' => 1],
+            ];
+            
+            // Calendar data for demo
+            $calendarTasks = [
+                now()->format('Y-m-d') => 2,
+                now()->addDays(1)->format('Y-m-d') => 1,
+                now()->addDays(3)->format('Y-m-d') => 3,
+                now()->addDays(7)->format('Y-m-d') => 1,
+            ];
+            
+            return view('dashboard', compact('stats', 'recentTasks', 'subjects', 'recentActivity', 'weeklyProgress', 'calendarTasks'));
         }
 
         // Original code for authenticated users
@@ -140,7 +158,45 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
 
-        return view('dashboard', compact('stats', 'recentTasks', 'subjects', 'recentActivity'));
+        // Get weekly progress data (last 5 weeks)
+        $weeklyProgress = [];
+        for ($i = 4; $i >= 0; $i--) {
+            $weekStart = now()->subWeeks($i)->startOfWeek();
+            $weekEnd = now()->subWeeks($i)->endOfWeek();
+            
+            $completed = $user->tasks()
+                ->where('status', 'completed')
+                ->whereBetween('due_date', [$weekStart, $weekEnd])
+                ->count();
+                
+            $pending = $user->tasks()
+                ->where('status', 'pending')
+                ->whereBetween('due_date', [$weekStart, $weekEnd])
+                ->count();
+                
+            $overdue = $user->tasks()
+                ->where('status', 'pending')
+                ->where('due_date', '<', now())
+                ->whereBetween('due_date', [$weekStart, $weekEnd])
+                ->count();
+            
+            $weeklyProgress[] = [
+                'week' => 'Sem ' . (5 - $i),
+                'completed' => $completed,
+                'pending' => $pending,
+                'overdue' => $overdue,
+            ];
+        }
+
+        // Get calendar data (tasks grouped by date)
+        $calendarTasks = $user->tasks()
+            ->selectRaw('DATE(due_date) as task_date, COUNT(*) as task_count')
+            ->whereBetween('due_date', [now()->startOfMonth()->subMonth(), now()->endOfMonth()->addMonth()])
+            ->groupBy('task_date')
+            ->pluck('task_count', 'task_date')
+            ->toArray();
+
+        return view('dashboard', compact('stats', 'recentTasks', 'subjects', 'recentActivity', 'weeklyProgress', 'calendarTasks'));
     }
 
     public function getStats()
