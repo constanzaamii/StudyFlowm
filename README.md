@@ -47,48 +47,7 @@
 
 ## 🗄️ Arquitectura y Modelo de Datos
 
-### Modelo Entidad-Relación (MER):
 
-\`\`\`
-USERS (Estudiantes)
-├── id (PK)
-├── student_id (UNIQUE)
-├── first_name, last_name
-├── email (UNIQUE)
-├── career, year_level
-└── timestamps
-
-SUBJECTS (Asignaturas)
-├── id (PK)
-├── code (UNIQUE)
-├── name, credits
-├── semester, year_level
-└── description
-
-TASKS (Tareas)
-├── id (PK)
-├── user_id (FK)
-├── subject_id (FK)
-├── title, description
-├── due_date, priority
-├── status, completion_date
-└── timestamps
-
-GRADES (Notas)
-├── id (PK)
-├── user_id (FK)
-├── subject_id (FK)
-├── evaluation_type
-├── grade, weight
-├── evaluation_date
-└── comments
-
-ENROLLMENTS (Inscripciones)
-├── user_id (FK)
-├── subject_id (FK)
-├── semester, status
-└── final_grade
-\`\`\`
 
 ### Flujo de Datos:
 1. **Entrada**: Usuario crea/edita tareas y registra notas
@@ -263,3 +222,8 @@ Este proyecto fue desarrollado como parte del Hackathón UCSC 2024 con fines edu
 ---
 
 **StudyFlow** - Organizando el éxito académico con Bootstrap, una tarea a la vez 📚✨
+
+**Referencias**
+https://v0.dev/ (Usado para interfaz grafica)
+Claude Sonnet 4 (IA usada para poder agilizar el proceso e indentar el codigo)
+
