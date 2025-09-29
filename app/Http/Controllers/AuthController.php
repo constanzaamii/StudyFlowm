@@ -114,14 +114,24 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string',
+            'remember' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
 
-        if (Auth::attempt($request->only('email', 'password'))) {
+        $credentials = $request->only('email', 'password');
+        $remember = $request->boolean('remember', true); // Por defecto siempre recordar
+
+        if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
+            
+            // Extender la duración del login si se marca recordar
+            if ($remember) {
+                config(['session.lifetime' => 10080]); // 7 días en minutos
+            }
+            
             return redirect()->intended(route('dashboard'));
         }
 

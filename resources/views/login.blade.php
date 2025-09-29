@@ -24,6 +24,10 @@
                     <label class="form-label">Contraseña</label>
                     <input type="password" name="password" class="form-input" required>
                 </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" name="remember" id="remember" value="1" checked>
+                    <label for="remember" class="form-label" style="margin: 0; cursor: pointer;">Mantener sesión activa</label>
+                </div>
                 <div style="margin: 1rem 0;">
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Ingresar</button>
                 </div>

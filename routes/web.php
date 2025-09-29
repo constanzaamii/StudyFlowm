@@ -41,6 +41,14 @@ Route::post('/login', [AuthController::class, 'webLogin']);
 // Logout
 Route::post('/logout', [AuthController::class, 'webLogout'])->name('logout');
 
+// Keep session alive
+Route::post('/keep-alive', function(Request $request) {
+    if (Auth::check()) {
+        return response()->json(['status' => 'alive', 'user' => Auth::user()->name]);
+    }
+    return response()->json(['status' => 'expired'], 401);
+})->middleware('auth');
+
 // Ruta principal redirige al login
 Route::get('/', function() {
     return redirect()->route('login');

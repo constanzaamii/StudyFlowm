@@ -13,10 +13,10 @@
             <div class="header-content">
                 <div class="logo">📚 StudyFlow</div>
                 <nav class="nav">
-                    <a href="/" class="nav-link">Dashboard</a>
-                    <a href="/tasks" class="nav-link">Tareas</a>
-                    <a href="/grades" class="nav-link">Notas</a>
-                    <a href="/profile" class="nav-link active">👤 Perfil</a>
+                    <a href="{{ route('dashboard') }}" class="nav-link">Dashboard</a>
+                    <a href="{{ route('tasks.index') }}" class="nav-link">Tareas</a>
+                    <a href="{{ route('grades.index') }}" class="nav-link">Notas</a>
+                    <a href="{{ route('profile') }}" class="nav-link active">👤 Perfil</a>
                 </nav>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
                     <span class="theme-icon">🌙</span>
@@ -453,6 +453,34 @@
     </main>
 
 <style>
+/* Sticky Header Styles */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--card, #fff);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.header .nav {
+    background: transparent;
+}
+
+.header .nav-link {
+    color: var(--foreground, #222);
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.2);
+    transition: color 0.2s;
+}
+
+.header .nav-link.active,
+.header .nav-link:hover {
+    color: var(--primary, #2563eb);
+    background: rgba(37,99,235,0.08);
+    border-radius: 6px;
+}
+
 /* Profile Styles */
 .profile-section {
     display: flex;

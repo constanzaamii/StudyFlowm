@@ -249,20 +249,29 @@ body::after {
 
 .nav-link:hover,
 .nav-link.active {
-  color: var(--primary-foreground);
+  color: #7c3aed !important;
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 25px rgba(120, 100, 250, 0.3);
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.8), 0 0 20px rgba(124, 58, 237, 0.6), 0 0 30px rgba(124, 58, 237, 0.4);
+  background: rgba(124, 58, 237, 0.35);
 }
 
 .nav-link:hover::before,
 .nav-link.active::before {
-  opacity: 1;
+  opacity: 0;
 }
 
 .nav-link span {
   position: relative;
   z-index: 1;
   color: inherit;
+}
+
+/* Efecto de brillo morado en el texto */
+.nav-link:hover span,
+.nav-link.active span {
+  color: #7c3aed !important;
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.6), 0 0 20px rgba(124, 58, 237, 0.4), 0 0 30px rgba(124, 58, 237, 0.2);
 }
 
 /* Asegurar que el texto sea visible en todos los estados */
@@ -273,7 +282,7 @@ body::after {
 /* Mejor contraste para modo claro */
 [data-theme="light"] .nav-link {
   color: var(--muted-foreground);
-  text-shadow: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 [data-theme="light"] .nav-link:hover,
@@ -306,7 +315,8 @@ body::after {
 
 /* Asegurar visibilidad en navbar light */
 .navbar-light .navbar-nav .nav-link {
-  color: rgba(0, 0, 0, 0.75) !important;
+   color: var(--primary) !important;
+
 }
 
 .navbar-light .navbar-nav .nav-link:hover,
@@ -1113,4 +1123,173 @@ body {
 
 .dark .modal {
   background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #7c3aed, #a855f7);
+  border-radius: 6px;
+  border: 2px solid var(--background);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #6d28d9, #9333ea);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #7c3aed var(--muted);
+}
+
+/* Sticky Header with Purple Navigation */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.1);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+.dark .header {
+  background: rgba(26, 26, 26, 0.95);
+  border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.header .nav-link {
+  color: var(--foreground) !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  position: relative;
+}
+
+.header .nav-link:hover {
+  color: #7c3aed !important;
+  background: rgba(124, 58, 237, 0.35);
+  transform: translateY(-1px);
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.8), 0 0 20px rgba(124, 58, 237, 0.6), 0 0 30px rgba(124, 58, 237, 0.4);
+  border-radius: 8px;
+}
+
+.header .nav-link.active {
+  color: #7c3aed !important;
+  background: rgba(124, 58, 237, 0.4);
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.4);
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.8), 0 0 20px rgba(124, 58, 237, 0.6), 0 0 30px rgba(124, 58, 237, 0.4);
+  border-radius: 8px;
+}
+
+.dark .header .nav-link:hover {
+  color: #7c3aed !important;
+  background: rgba(124, 58, 237, 0.35);
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.8), 0 0 20px rgba(124, 58, 237, 0.6), 0 0 30px rgba(124, 58, 237, 0.4);
+}
+
+.dark .header .nav-link.active {
+  color: #7c3aed !important;
+  background: rgba(124, 58, 237, 0.4);
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.8), 0 0 20px rgba(124, 58, 237, 0.6), 0 0 30px rgba(124, 58, 237, 0.4);
+}
+
+/* Efecto de brillo morado igual para ambos temas */
+.header .nav-link:hover *,
+.header .nav-link.active *,
+.nav-link:hover *,
+.nav-link.active *,
+.dark .header .nav-link:hover *,
+.dark .header .nav-link.active * {
+  color: #7c3aed !important;
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.8), 0 0 20px rgba(124, 58, 237, 0.6), 0 0 30px rgba(124, 58, 237, 0.4);
+}
+
+/* Logo and theme toggle visibility */
+.header .logo {
+  color: var(--foreground) !important;
+  font-weight: 700;
+}
+
+.header .theme-toggle {
+  color: var(--foreground) !important;
+  transition: all 0.3s ease;
+}
+
+.header .theme-toggle:hover {
+  color: #7c3aed !important;
+  transform: scale(1.1);
+}
+
+.dark .header .theme-toggle:hover {
+  color: #a855f7 !important;
+}
+
+/* Nav Scrollbar Styles */
+.nav {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #7c3aed var(--muted);
+}
+
+.nav::-webkit-scrollbar {
+  height: 8px;
+}
+
+.nav::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+.nav::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #7c3aed, #a855f7);
+  border-radius: 4px;
+  border: 1px solid var(--background);
+}
+
+.nav::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #6d28d9, #9333ea);
+}
+
+/* Nav Link Hover and Active States with Purple */
+.nav .nav-link {
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.nav .nav-link:hover {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.nav .nav-link.active {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4);
+}
+
+.dark .nav .nav-link:hover {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #a855f7, #c084fc);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+}
+
+.dark .nav .nav-link.active {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #a855f7, #c084fc);
+  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4);
 }

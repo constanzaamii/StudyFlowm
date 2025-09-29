@@ -444,3 +444,32 @@ function toggleTheme() {
 
 // Initialize theme on page load
 document.addEventListener('DOMContentLoaded', initTheme)
+
+// Session Keep-Alive
+function keepSessionAlive() {
+  // Enviar request cada 10 minutos para mantener la sesión activa
+  setInterval(async () => {
+    try {
+      const response = await fetch('/keep-alive', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ping: true })
+      });
+      
+      if (!response.ok) {
+        console.warn('Session keep-alive failed');
+      }
+    } catch (error) {
+      console.warn('Error keeping session alive:', error);
+    }
+  }, 10 * 60 * 1000); // 10 minutos
+}
+
+// Inicializar keep-alive cuando la página esté lista
+document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  keepSessionAlive();
+});
