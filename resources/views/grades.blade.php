@@ -253,6 +253,76 @@
         </div>
     </div>
 
+    <!-- Subject Details Modal -->
+    <div class="modal" id="subjectDetailsModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="subjectDetailsTitle">📚 Detalles de Asignatura</h3>
+                <button class="close-btn" onclick="closeSubjectDetailsModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <div class="subject-details-content">
+                    <div class="subject-info-grid">
+                        <div class="subject-info-item">
+                            <div class="info-label">📝 Nombre</div>
+                            <div class="info-value" id="detailSubjectName">-</div>
+                        </div>
+                        <div class="subject-info-item">
+                            <div class="info-label">🔢 Código</div>
+                            <div class="info-value" id="detailSubjectCode">-</div>
+                        </div>
+                        <div class="subject-info-item">
+                            <div class="info-label">⚖️ Créditos</div>
+                            <div class="info-value" id="detailSubjectCredits">-</div>
+                        </div>
+                        <div class="subject-info-item">
+                            <div class="info-label">📅 Semestre</div>
+                            <div class="info-value" id="detailSubjectSemester">-</div>
+                        </div>
+                        <div class="subject-info-item">
+                            <div class="info-label">📊 Estado</div>
+                            <div class="info-value" id="detailSubjectStatus">-</div>
+                        </div>
+                        <div class="subject-info-item" id="gradeSection" style="display: none;">
+                            <div class="info-label">🎯 Promedio</div>
+                            <div class="info-value" id="detailSubjectGrade">-</div>
+                        </div>
+                    </div>
+                    
+                    <div class="subject-progress" id="subjectProgressSection" style="display: none;">
+                        <div class="progress-label">Progreso de la asignatura</div>
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" id="subjectProgressFill"></div>
+                        </div>
+                        <div class="progress-text" id="subjectProgressText">0%</div>
+                    </div>
+                    
+                    <div class="subject-actions" id="subjectActionsSection">
+                        <div class="action-buttons-grid">
+                            <button class="action-btn completed" onclick="markSubjectCompleted()" id="markCompletedBtn">
+                                ✅ Marcar como Completada
+                            </button>
+                            <button class="action-btn current" onclick="markSubjectCurrent()" id="markCurrentBtn">
+                                🔄 Marcar como Cursando
+                            </button>
+                            <button class="action-btn pending" onclick="markSubjectPending()" id="markPendingBtn">
+                                ⏳ Marcar como Pendiente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <div class="modal-footer-info">
+                    <small style="color: var(--muted-foreground);">💡 Tip: Haz clic en los botones para cambiar el estado</small>
+                </div>
+                <button class="btn btn-primary" onclick="closeSubjectDetailsModal()">
+                    ✓ Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Instructions Modal -->
     <div class="modal" id="instructionsModal">
         <div class="modal-content" style="max-width: 600px;">
@@ -642,6 +712,219 @@
         gap: 0.25rem;
     }
 }
+
+/* Subject Details Modal Styles */
+.subject-details-content {
+    line-height: 1.6;
+}
+
+.subject-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.subject-info-item {
+    background: var(--accent);
+    padding: 1rem;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--primary);
+    transition: all 0.3s ease;
+}
+
+.subject-info-item:hover {
+    background: var(--muted);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.info-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--foreground);
+}
+
+.subject-progress {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.progress-label {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--foreground);
+    font-size: 0.95rem;
+}
+
+.progress-bar-small {
+    width: 100%;
+    height: 6px;
+    background-color: var(--muted);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill-small {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #4f46e5);
+    transition: width 0.5s ease;
+    border-radius: 3px;
+}
+
+.progress-text {
+    text-align: center;
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.subject-actions {
+    margin-top: 1.5rem;
+}
+
+.action-buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+.action-btn {
+    padding: 0.75rem 1rem;
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    background: var(--accent);
+    color: var(--foreground);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.action-btn.completed {
+    border-color: #059669;
+    background: rgba(5, 150, 105, 0.1);
+    color: #059669;
+}
+
+.action-btn.completed:hover {
+    background: rgba(5, 150, 105, 0.2);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.action-btn.current {
+    border-color: var(--primary);
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary);
+}
+
+.action-btn.current:hover {
+    background: rgba(59, 130, 246, 0.2);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.action-btn.pending {
+    border-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.action-btn.pending:hover {
+    background: rgba(245, 158, 11, 0.2);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+}
+
+.action-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.modal-footer-info {
+    flex: 1;
+}
+
+/* Status badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.status-badge.completed {
+    background: rgba(5, 150, 105, 0.1);
+    color: #059669;
+    border: 1px solid rgba(5, 150, 105, 0.3);
+}
+
+.status-badge.current {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.status-badge.pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Responsive adjustments for subject details modal */
+@media (max-width: 768px) {
+    .subject-info-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .action-buttons-grid {
+        gap: 0.5rem;
+    }
+    
+    .action-btn {
+        padding: 0.65rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch !important;
+    }
+    
+    .modal-footer-info {
+        text-align: center;
+    }
+}
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -653,6 +936,7 @@ let allSubjects = [];
 let mallaData = [];
 let currentGradesPage = 1;
 let currentAcademicPage = 1;
+let currentSubjectDetails = null;
 const itemsPerPage = 10;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1092,17 +1376,186 @@ function displayMalla() {
 function showSubjectDetails(code) {
     // Encontrar la asignatura
     let subject = null;
-    Object.values(mallaData).forEach(semester => {
-        const found = semester.find(s => s.code === code);
-        if (found) subject = found;
+    let semesterNumber = null;
+    
+    Object.keys(mallaData).forEach(semester => {
+        const found = mallaData[semester].find(s => s.code === code);
+        if (found) {
+            subject = found;
+            semesterNumber = semester;
+        }
     });
     
     if (subject) {
+        currentSubjectDetails = { ...subject, semester: semesterNumber };
+        
+        // Llenar los datos del modal
+        document.getElementById('detailSubjectName').textContent = subject.name;
+        document.getElementById('detailSubjectCode').textContent = subject.code;
+        document.getElementById('detailSubjectCredits').textContent = subject.credits;
+        document.getElementById('detailSubjectSemester').textContent = `${semesterNumber}° Semestre`;
+        
+        // Estado con badge
+        const statusElement = document.getElementById('detailSubjectStatus');
         const statusText = subject.status === 'completed' ? 'Completada' :
                           subject.status === 'current' ? 'Cursando' : 'Pendiente';
+        const statusIcon = subject.status === 'completed' ? '✅' :
+                          subject.status === 'current' ? '🔄' : '⏳';
         
-        alert(`Asignatura: ${subject.name}\nCódigo: ${subject.code}\nCréditos: ${subject.credits}\nEstado: ${statusText}`);
+        statusElement.innerHTML = `<div class="status-badge ${subject.status}">${statusIcon} ${statusText}</div>`;
+        
+        // Mostrar/ocultar sección de progreso basado en el estado
+        const progressSection = document.getElementById('subjectProgressSection');
+        if (subject.status === 'current') {
+            progressSection.style.display = 'block';
+            // Simular progreso basado en fecha actual y duración del semestre
+            const progress = Math.floor(Math.random() * 70) + 20; // 20-90%
+            document.getElementById('subjectProgressFill').style.width = `${progress}%`;
+            document.getElementById('subjectProgressText').textContent = `${progress}% completado`;
+        } else {
+            progressSection.style.display = 'none';
+        }
+        
+        // Mostrar promedio si está disponible
+        const gradeSection = document.getElementById('gradeSection');
+        const relatedGrades = allGrades.filter(grade => 
+            grade.subject && grade.subject.name === subject.name
+        );
+        
+        if (relatedGrades.length > 0) {
+            gradeSection.style.display = 'block';
+            const average = relatedGrades.reduce((sum, grade) => sum + grade.grade, 0) / relatedGrades.length;
+            const gradeClass = average >= 6.0 ? 'grade-excellent' :
+                              average >= 5.0 ? 'grade-good' :
+                              average >= 4.0 ? 'grade-sufficient' : 'grade-insufficient';
+            
+            document.getElementById('detailSubjectGrade').innerHTML = 
+                `<span class="grade-value ${gradeClass}">${average.toFixed(1)}</span>`;
+        } else {
+            gradeSection.style.display = 'none';
+        }
+        
+        // Configurar botones de acción
+        updateActionButtons(subject.status);
+        
+        // Mostrar el modal
+        document.getElementById('subjectDetailsModal').classList.add('active');
     }
+}
+
+function updateActionButtons(currentStatus) {
+    const buttons = {
+        completed: document.getElementById('markCompletedBtn'),
+        current: document.getElementById('markCurrentBtn'),
+        pending: document.getElementById('markPendingBtn')
+    };
+    
+    // Restablecer todos los botones
+    Object.values(buttons).forEach(btn => {
+        btn.classList.remove('disabled');
+    });
+    
+    // Deshabilitar el botón del estado actual
+    if (buttons[currentStatus]) {
+        buttons[currentStatus].classList.add('disabled');
+    }
+}
+
+function markSubjectCompleted() {
+    updateSubjectStatus('completed');
+}
+
+function markSubjectCurrent() {
+    updateSubjectStatus('current');
+}
+
+function markSubjectPending() {
+    updateSubjectStatus('pending');
+}
+
+function updateSubjectStatus(newStatus) {
+    if (!currentSubjectDetails) return;
+    
+    // Actualizar en mallaData
+    const semester = currentSubjectDetails.semester;
+    const subjectIndex = mallaData[semester].findIndex(s => s.code === currentSubjectDetails.code);
+    
+    if (subjectIndex !== -1) {
+        mallaData[semester][subjectIndex].status = newStatus;
+        currentSubjectDetails.status = newStatus;
+        
+        // Actualizar el modal
+        showSubjectDetails(currentSubjectDetails.code);
+        
+        // Actualizar la visualización de la malla
+        displayMalla();
+        
+        // Mostrar notificación
+        const statusText = newStatus === 'completed' ? 'completada' :
+                          newStatus === 'current' ? 'en curso' : 'pendiente';
+        
+        // Crear notificación personalizada
+        showNotification(`Asignatura marcada como ${statusText}`, 'success');
+    }
+}
+
+function showNotification(message, type = 'info') {
+    // Crear elemento de notificación
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <span class="notification-icon">${type === 'success' ? '✅' : 'ℹ️'}</span>
+            <span class="notification-message">${message}</span>
+        </div>
+    `;
+    
+    // Agregar estilos inline para la notificación
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? 'rgba(5, 150, 105, 0.95)' : 'rgba(59, 130, 246, 0.95)'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1000;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid ${type === 'success' ? 'rgba(5, 150, 105, 0.3)' : 'rgba(59, 130, 246, 0.3)'};
+    `;
+    
+    const notificationContent = notification.querySelector('.notification-content');
+    notificationContent.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 600;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animar entrada
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Remover después de 3 segundos
+    setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+function closeSubjectDetailsModal() {
+    document.getElementById('subjectDetailsModal').classList.remove('active');
+    currentSubjectDetails = null;
 }
 
 function showMallaInstructions() {
@@ -1185,6 +1638,7 @@ window.addEventListener('click', (e) => {
     const gradeModal = document.getElementById('gradeModal');
     const subjectModal = document.getElementById('subjectModal');
     const instructionsModal = document.getElementById('instructionsModal');
+    const subjectDetailsModal = document.getElementById('subjectDetailsModal');
     
     if (e.target === gradeModal) {
         closeGradeModal();
@@ -1197,6 +1651,10 @@ window.addEventListener('click', (e) => {
     if (e.target === instructionsModal) {
         closeInstructionsModal();
     }
+    
+    if (e.target === subjectDetailsModal) {
+        closeSubjectDetailsModal();
+    }
 });
 
 // Cerrar modales con tecla ESC
@@ -1205,6 +1663,7 @@ document.addEventListener('keydown', (e) => {
         const gradeModal = document.getElementById('gradeModal');
         const subjectModal = document.getElementById('subjectModal');
         const instructionsModal = document.getElementById('instructionsModal');
+        const subjectDetailsModal = document.getElementById('subjectDetailsModal');
         
         if (gradeModal.classList.contains('active')) {
             closeGradeModal();
@@ -1212,6 +1671,8 @@ document.addEventListener('keydown', (e) => {
             closeSubjectModal();
         } else if (instructionsModal.classList.contains('active')) {
             closeInstructionsModal();
+        } else if (subjectDetailsModal.classList.contains('active')) {
+            closeSubjectDetailsModal();
         }
     }
 });
