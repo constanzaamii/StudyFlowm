@@ -2,13 +2,13 @@
 
 ## 📚 Descripción del Proyecto
 
-**StudyFlow** es un sistema de gestión académica desarrollado para el Hackathón UCSC 2024, enfocado en el **Eje 2: Gestión académica básica**. La aplicación permite a los estudiantes de Ingeniería de Ejecución en Informática organizar sus tareas, calcular notas, hacer seguimiento de su progreso académico y gestionar recordatorios.
+**StudyFlow** es un sistema de gestión académica desarrollado para el Hackathón UCSC 2024, enfocado en el **Eje 2: Gestión académica básica**. La aplicación permite a los estudiantes  organizar sus tareas, calcular notas, hacer seguimiento de su progreso académico y gestionar recordatorios.
 
 ## 🎯 Problema y Usuario Objetivo
 
 **Problema**: Los estudiantes universitarios necesitan una herramienta centralizada para organizar sus entregas académicas, calcular promedios de notas y hacer seguimiento de su progreso, especialmente durante los primeros años de carrera donde la carga académica puede ser abrumadora.
 
-**Usuario Objetivo**: Estudiantes de 1° y 2° año de Ingeniería de Ejecución en Informática de la UCSC que buscan mejorar su organización académica y rendimiento estudiantil.
+**Usuario Objetivo**: Estudiantes de 1° y 2° año de la UCSC que buscan mejorar su organización académica y rendimiento estudiantil.
 
 ## 🚀 Solución Propuesta (MVP)
 
@@ -47,48 +47,7 @@
 
 ## 🗄️ Arquitectura y Modelo de Datos
 
-### Modelo Entidad-Relación (MER):
 
-\`\`\`
-USERS (Estudiantes)
-├── id (PK)
-├── student_id (UNIQUE)
-├── first_name, last_name
-├── email (UNIQUE)
-├── career, year_level
-└── timestamps
-
-SUBJECTS (Asignaturas)
-├── id (PK)
-├── code (UNIQUE)
-├── name, credits
-├── semester, year_level
-└── description
-
-TASKS (Tareas)
-├── id (PK)
-├── user_id (FK)
-├── subject_id (FK)
-├── title, description
-├── due_date, priority
-├── status, completion_date
-└── timestamps
-
-GRADES (Notas)
-├── id (PK)
-├── user_id (FK)
-├── subject_id (FK)
-├── evaluation_type
-├── grade, weight
-├── evaluation_date
-└── comments
-
-ENROLLMENTS (Inscripciones)
-├── user_id (FK)
-├── subject_id (FK)
-├── semester, status
-└── final_grade
-\`\`\`
 
 ### Flujo de Datos:
 1. **Entrada**: Usuario crea/edita tareas y registra notas
@@ -216,18 +175,17 @@ studyflow-academic-manager/
 ## 🔮 Futuras Mejoras
 
 ### Corto Plazo:
-- [ ] Integración con base de datos real (MySQL/PostgreSQL)
 - [ ] Sistema de autenticación de usuarios
 - [ ] Notificaciones push y por email
-- [ ] Importación/exportación de datos académicos
-- [ ] Tema oscuro con Bootstrap variables CSS
+    
+
 
 ### Mediano Plazo:
 - [ ] Aplicación móvil nativa (React Native/Flutter)
 - [ ] Integración con sistemas académicos UCSC
 - [ ] Funcionalidades colaborativas (grupos de estudio)
 - [ ] Analytics avanzados de rendimiento
-- [ ] PWA (Progressive Web App) con Service Workers
+
 
 ### Largo Plazo:
 - [ ] IA para recomendaciones de estudio
@@ -263,3 +221,8 @@ Este proyecto fue desarrollado como parte del Hackathón UCSC 2024 con fines edu
 ---
 
 **StudyFlow** - Organizando el éxito académico con Bootstrap, una tarea a la vez 📚✨
+
+**Referencias**
+https://v0.dev/ (Usado para interfaz grafica)
+Claude Sonnet 4 (IA usada para poder agilizar el proceso e indentar el codigo)
+
