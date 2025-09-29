@@ -1,3 +1,8 @@
+# Usuario#
+:maria@studyflow.com
+:password123
+
+
 # StudyFlow - Sistema de Gestión Académica UCSC
 
 ## 📚 Descripción del Proyecto
